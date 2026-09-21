@@ -126,7 +126,6 @@ class UiStore(context: Context) {
         defaultValue = false,
     )
 
-
     companion object {
         private const val PREFERENCE_NAME = "ui"
 
