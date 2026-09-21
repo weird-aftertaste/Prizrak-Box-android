@@ -16,6 +16,7 @@ object Intents {
     val ACTION_CLASH_STARTED = "$packageName.intent.action.CLASH_STARTED"
     val ACTION_CLASH_STOPPED = "$packageName.intent.action.CLASH_STOPPED"
     val ACTION_CLASH_REQUEST_STOP = "$packageName.intent.action.CLASH_REQUEST_STOP"
+    val ACTION_WIFI_AUTOMATION_CHANGED = "$packageName.intent.action.WIFI_AUTOMATION_CHANGED"
     val ACTION_PROFILE_CHANGED = "$packageName.intent.action.PROFILE_CHANGED"
     val ACTION_PROFILE_UPDATE_COMPLETED = "$packageName.intent.action.PROFILE_UPDATE_COMPLETED"
     val ACTION_PROFILE_UPDATE_FAILED = "$packageName.intent.action.PROFILE_UPDATE_FAILED"
