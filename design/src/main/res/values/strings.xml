@@ -664,11 +664,5 @@
         <!-- Wi-Fi automation -->
     <string name="wifi_automation_category">Wi-Fi automation</string>
     <string name="wifi_automation_title">Automatic VPN by Wi-Fi</string>
-    <string name="wifi_automation_summary">Turn Prizrak off while Wi-Fi with internet is connected, and start it again when switching to mobile data or another non-Wi-Fi network.</string>
-    <string name="wifi_automation_notification_channel">Wi-Fi automation</string>
-    <string name="wifi_automation_notification_title">Wi-Fi automation</string>
-    <string name="wifi_automation_waiting_network">Waiting for a validated network</string>
-    <string name="wifi_automation_wifi_connected">Wi-Fi connected — VPN off</string>
-    <string name="wifi_automation_no_wifi">No Wi-Fi — VPN on</string>
-    <string name="wifi_automation_vpn_permission">Open Prizrak once and grant VPN permission</string>
+    <string name="wifi_automation_summary">Pause the VPN tunnel on validated Wi-Fi and resume it on mobile or another non-Wi-Fi network, using the existing network observer without a second background service.</string>
 </resources>
