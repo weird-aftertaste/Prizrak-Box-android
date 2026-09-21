@@ -27,6 +27,7 @@ fun NetworkSettingsScreen(
     running: Boolean,
     onBack: () -> Unit,
     onAccessControlPackages: () -> Unit,
+    onWifiAutomationChanged: (Boolean) -> Unit,
 ) {
     var showTunStack by remember { mutableStateOf(false) }
 
@@ -35,6 +36,7 @@ fun NetworkSettingsScreen(
     var enableVpn by remember { mutableStateOf(uiStore.enableVpn) }
     var tunStackMode by remember { mutableStateOf(srvStore.tunStackMode) }
     var resetConnections by remember { mutableStateOf(srvStore.resetConnectionsOnNetworkChange) }
+    var wifiAutomation by remember { mutableStateOf(srvStore.wifiAutomationEnabled) }
 
     val vpnEnabled = !running
 
@@ -136,6 +138,20 @@ fun NetworkSettingsScreen(
                 summary = stringResource(R.string.reset_connections_summary),
                 checked = resetConnections,
                 onCheckedChange = { srvStore.resetConnectionsOnNetworkChange = it; resetConnections = it },
+            )
+        }
+
+        item { SettingsCategory(stringResource(R.string.wifi_automation_category)) }
+        item {
+            SwitchPreference(
+                title = stringResource(R.string.wifi_automation_title),
+                summary = stringResource(R.string.wifi_automation_summary),
+                checked = wifiAutomation,
+                enabled = enableVpn,
+                onCheckedChange = {
+                    wifiAutomation = it
+                    onWifiAutomationChanged(it)
+                },
             )
         }
     }

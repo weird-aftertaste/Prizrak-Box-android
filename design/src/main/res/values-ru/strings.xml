@@ -623,4 +623,9 @@
     <string name="notification_permission_blocked">Уведомления заблокированы в системных настройках — пока это не исправлено, ничего из перечисленного ниже не покажется.</string>
     <string name="notification_open_settings">Открыть настройки</string>
     <string name="notification_permission_blocked_short">Заблокировано в системных настройках</string>
+
+        <!-- Автоматизация Wi-Fi -->
+    <string name="wifi_automation_category">Автоматизация Wi-Fi</string>
+    <string name="wifi_automation_title">Автоматический VPN по Wi-Fi</string>
+    <string name="wifi_automation_summary">Приостанавливать VPN-туннель на Wi-Fi с интернетом и возобновлять его в мобильной или другой не-Wi-Fi сети — без отдельного фонового сервиса.</string>
 </resources>

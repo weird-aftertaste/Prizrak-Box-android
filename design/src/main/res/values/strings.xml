@@ -660,4 +660,9 @@
     <string name="notification_permission_blocked">Notifications are blocked in system settings — nothing below will actually show up until this is fixed.</string>
     <string name="notification_open_settings">Open settings</string>
     <string name="notification_permission_blocked_short">Blocked in system settings</string>
+
+        <!-- Wi-Fi automation -->
+    <string name="wifi_automation_category">Wi-Fi automation</string>
+    <string name="wifi_automation_title">Automatic VPN by Wi-Fi</string>
+    <string name="wifi_automation_summary">Pause the VPN tunnel on validated Wi-Fi and resume it on mobile or another non-Wi-Fi network, using the existing network observer without a second background service.</string>
 </resources>

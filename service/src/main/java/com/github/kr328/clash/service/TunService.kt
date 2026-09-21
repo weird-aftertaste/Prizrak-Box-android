@@ -47,6 +47,39 @@ class TunService : VpnService(), CoroutineScope by CoroutineScope(Dispatchers.De
         install(TimeZoneModule(self))
         install(SuspendModule(self))
 
+        var wifiPaused = false
+
+        fun syncWifiAutomation() {
+            val enabled = store.wifiAutomationEnabled
+            val transport = network.currentTransport()
+
+            when {
+                enabled &&
+                    transport == NetworkObserveModule.CurrentTransport.Wifi &&
+                    !wifiPaused -> {
+                    Log.i("Wi-Fi automation: pausing TUN on validated Wi-Fi")
+
+                    tun.pause()
+                    wifiPaused = true
+                }
+
+                wifiPaused && (
+                    !enabled ||
+                        transport == NetworkObserveModule.CurrentTransport.Other
+                    ) -> {
+                    Log.i("Wi-Fi automation: resuming TUN")
+
+                    tun.open()
+                    wifiPaused = false
+                }
+
+                // During a handover there may briefly be no validated network.
+                // Keep the previous pause/run state until Android validates the
+                // next transport instead of flapping the VPN.
+                else -> Unit
+            }
+        }
+
         try {
             tun.open()
 
@@ -64,6 +97,8 @@ class TunService : VpnService(), CoroutineScope by CoroutineScope(Dispatchers.De
                         if (Build.VERSION.SDK_INT in 22..28) @TargetApi(22) {
                             setUnderlyingNetworks(n?.let { arrayOf(it) })
                         }
+
+                        syncWifiAutomation()
 
                         false
                     }
