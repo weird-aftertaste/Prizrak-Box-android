@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.design.R
@@ -15,6 +16,7 @@ import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.service.util.sendBroadcastSelf
 import com.github.kr328.clash.util.startClashService
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class NetworkSettingsActivity : BaseActivity() {
     private val srvStore by lazy { ServiceStore(this) }
@@ -62,7 +64,20 @@ class NetworkSettingsActivity : BaseActivity() {
         // the service will pause itself immediately if the current network is
         // validated Wi-Fi.
         if (enabled && !clashRunning) {
-            startClashService()?.let(::startActivity)
+            val vpnRequest = startClashService()
+
+            if (vpnRequest != null) {
+                launch {
+                    val result = startActivityForResult(
+                        ActivityResultContracts.StartActivityForResult(),
+                        vpnRequest,
+                    )
+
+                    if (result.resultCode == RESULT_OK) {
+                        startClashService()
+                    }
+                }
+            }
         }
     }
 
