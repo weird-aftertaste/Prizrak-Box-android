@@ -126,6 +126,24 @@ class UiStore(context: Context) {
         defaultValue = false,
     )
 
+    /**
+     * Automatically stop the tunnel on trusted Wi-Fi networks and start it
+     * again on any other validated network.
+     */
+    var wifiAutomationEnabled: Boolean by store.boolean(
+        key = "wifi_automation_enabled",
+        defaultValue = false,
+    )
+
+    /**
+     * SSIDs on which Prizrak should stay stopped. Stored as plain names without
+     * the quotes Android may add around WifiInfo.ssid.
+     */
+    var trustedWifiSsids by store.stringSet(
+        key = "trusted_wifi_ssids",
+        defaultValue = emptySet(),
+    )
+
     companion object {
         private const val PREFERENCE_NAME = "ui"
 
