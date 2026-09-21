@@ -252,7 +252,7 @@ class WifiAutomationService : Service() {
     }
 
     private fun normalizeSsid(value: String): String =
-        value.trim().removeSurrounding(""")
+        value.trim().removeSurrounding("\"")
 
     companion object {
         private const val CHANNEL_ID = "wifi_automation_channel"
