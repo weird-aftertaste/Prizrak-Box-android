@@ -36,7 +36,7 @@ fun NetworkSettingsScreen(
     var enableVpn by remember { mutableStateOf(uiStore.enableVpn) }
     var tunStackMode by remember { mutableStateOf(srvStore.tunStackMode) }
     var resetConnections by remember { mutableStateOf(srvStore.resetConnectionsOnNetworkChange) }
-    var wifiAutomation by remember { mutableStateOf(uiStore.wifiAutomationEnabled) }
+    var wifiAutomation by remember { mutableStateOf(srvStore.wifiAutomationEnabled) }
 
     val vpnEnabled = !running
 
