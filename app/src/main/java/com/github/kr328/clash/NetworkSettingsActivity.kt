@@ -20,13 +20,19 @@ class NetworkSettingsActivity : BaseActivity() {
     private var pendingWifiAutomationEnable = false
 
     private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { granted ->
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { grants ->
         if (!pendingWifiAutomationEnable) return@registerForActivityResult
 
         pendingWifiAutomationEnable = false
+        val fineGranted =
+            grants[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                ) == PackageManager.PERMISSION_GRANTED
 
-        if (granted) {
+        if (fineGranted) {
             uiStore.wifiAutomationEnabled = true
             startWifiAutomationService()
         } else {
@@ -94,7 +100,12 @@ class NetworkSettingsActivity : BaseActivity() {
             // Android classifies the connected SSID as location-sensitive
             // information. Ask only when the user actually enables automation.
             pendingWifiAutomationEnable = true
-            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                )
+            )
         }
     }
 
