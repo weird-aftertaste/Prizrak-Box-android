@@ -627,11 +627,5 @@
         <!-- Автоматизация Wi-Fi -->
     <string name="wifi_automation_category">Автоматизация Wi-Fi</string>
     <string name="wifi_automation_title">Автоматический VPN по Wi-Fi</string>
-    <string name="wifi_automation_summary">Выключать Prizrak, пока подключён Wi-Fi с интернетом, и включать обратно при переходе на мобильную сеть или другую не-Wi-Fi сеть.</string>
-    <string name="wifi_automation_notification_channel">Автоматизация Wi-Fi</string>
-    <string name="wifi_automation_notification_title">Автоматизация Wi-Fi</string>
-    <string name="wifi_automation_waiting_network">Ожидание сети с доступом в интернет</string>
-    <string name="wifi_automation_wifi_connected">Wi-Fi подключён — VPN выключен</string>
-    <string name="wifi_automation_no_wifi">Wi-Fi нет — VPN включён</string>
-    <string name="wifi_automation_vpn_permission">Откройте Prizrak один раз и выдайте разрешение на VPN</string>
+    <string name="wifi_automation_summary">Приостанавливать VPN-туннель на Wi-Fi с интернетом и возобновлять его в мобильной или другой не-Wi-Fi сети — без отдельного фонового сервиса.</string>
 </resources>
