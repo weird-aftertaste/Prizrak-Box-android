@@ -66,6 +66,15 @@ class TunModule(private val vpn: VpnService) : Module<Unit>(vpn) {
         )
     }
 
+    /**
+     * Drop the active TUN/HTTP endpoints without destroying the module.
+     * Network observation and the foreground service stay alive, so the same
+     * service can reopen the tunnel after leaving Wi-Fi.
+     */
+    fun pause() {
+        requestStop()
+    }
+
     suspend fun close() {
         close.send(Unit)
     }
