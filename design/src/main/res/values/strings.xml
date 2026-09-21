@@ -661,20 +661,14 @@
     <string name="notification_open_settings">Open settings</string>
     <string name="notification_permission_blocked_short">Blocked in system settings</string>
 
-    <!-- Wi-Fi automation -->
+        <!-- Wi-Fi automation -->
     <string name="wifi_automation_category">Wi-Fi automation</string>
     <string name="wifi_automation_title">Automatic VPN by Wi-Fi</string>
-    <string name="wifi_automation_summary">Turn Prizrak off on trusted Wi-Fi and back on on other Wi-Fi or mobile networks. Android requires location access to read the Wi-Fi name.</string>
-    <string name="trusted_wifi_title">Trusted Wi-Fi networks</string>
-    <string name="trusted_wifi_empty">Add SSID names, for example Home_5G</string>
+    <string name="wifi_automation_summary">Turn Prizrak off while Wi-Fi with internet is connected, and start it again when switching to mobile data or another non-Wi-Fi network.</string>
     <string name="wifi_automation_notification_channel">Wi-Fi automation</string>
     <string name="wifi_automation_notification_title">Wi-Fi automation</string>
     <string name="wifi_automation_waiting_network">Waiting for a validated network</string>
-    <string name="wifi_automation_no_networks">Add at least one trusted Wi-Fi network</string>
-    <string name="wifi_automation_trusted">Trusted Wi-Fi: %1$s — VPN off</string>
-    <string name="wifi_automation_untrusted">Outside trusted Wi-Fi — VPN on</string>
-    <string name="wifi_automation_ssid_unavailable">Wi-Fi name unavailable — keeping VPN on</string>
+    <string name="wifi_automation_wifi_connected">Wi-Fi connected — VPN off</string>
+    <string name="wifi_automation_no_wifi">No Wi-Fi — VPN on</string>
     <string name="wifi_automation_vpn_permission">Open Prizrak once and grant VPN permission</string>
-    <string name="wifi_automation_location_permission_denied">Location permission is required because Android treats the connected Wi-Fi name as location-sensitive information.</string>
-
 </resources>
