@@ -624,20 +624,14 @@
     <string name="notification_open_settings">Открыть настройки</string>
     <string name="notification_permission_blocked_short">Заблокировано в системных настройках</string>
 
-    <!-- Автоматизация Wi-Fi -->
+        <!-- Автоматизация Wi-Fi -->
     <string name="wifi_automation_category">Автоматизация Wi-Fi</string>
     <string name="wifi_automation_title">Автоматический VPN по Wi-Fi</string>
-    <string name="wifi_automation_summary">Выключать Prizrak в доверенных Wi-Fi и включать обратно в других Wi-Fi или мобильной сети. Android требует доступ к геопозиции для чтения имени Wi-Fi.</string>
-    <string name="trusted_wifi_title">Доверенные Wi-Fi</string>
-    <string name="trusted_wifi_empty">Добавьте имена SSID, например Home_5G</string>
+    <string name="wifi_automation_summary">Выключать Prizrak, пока подключён Wi-Fi с интернетом, и включать обратно при переходе на мобильную сеть или другую не-Wi-Fi сеть.</string>
     <string name="wifi_automation_notification_channel">Автоматизация Wi-Fi</string>
     <string name="wifi_automation_notification_title">Автоматизация Wi-Fi</string>
     <string name="wifi_automation_waiting_network">Ожидание сети с доступом в интернет</string>
-    <string name="wifi_automation_no_networks">Добавьте хотя бы одну доверенную Wi-Fi сеть</string>
-    <string name="wifi_automation_trusted">Доверенный Wi-Fi: %1$s — VPN выключен</string>
-    <string name="wifi_automation_untrusted">Вне доверенного Wi-Fi — VPN включён</string>
-    <string name="wifi_automation_ssid_unavailable">Имя Wi-Fi недоступно — VPN оставлен включённым</string>
+    <string name="wifi_automation_wifi_connected">Wi-Fi подключён — VPN выключен</string>
+    <string name="wifi_automation_no_wifi">Wi-Fi нет — VPN включён</string>
     <string name="wifi_automation_vpn_permission">Откройте Prizrak один раз и выдайте разрешение на VPN</string>
-    <string name="wifi_automation_location_permission_denied">Нужен доступ к геопозиции: Android считает имя подключённой Wi-Fi сети чувствительной к местоположению информацией.</string>
-
 </resources>
