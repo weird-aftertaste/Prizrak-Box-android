@@ -8,7 +8,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.net.wifi.WifiManager
 import android.os.IBinder
 import androidx.core.app.NotificationChannelCompat
 import androidx.core.app.NotificationCompat
@@ -29,10 +28,9 @@ import com.github.kr328.clash.service.R as ServiceR
 /**
  * Keeps Wi-Fi automation alive independently from the Clash/VPN service.
  *
- * This must be a separate foreground service: when a trusted Wi-Fi is reached
- * the automation intentionally stops Clash, so a watcher living inside the
- * Clash runtime would die at exactly the moment it still needs to observe the
- * next Wi-Fi -> mobile transition.
+ * The watcher must not live inside the Clash runtime: on Wi-Fi it intentionally
+ * stops Clash, but still has to notice the later Wi-Fi -> mobile transition and
+ * start it again.
  */
 class WifiAutomationService : Service() {
     private data class NetworkState(
@@ -41,9 +39,6 @@ class WifiAutomationService : Service() {
 
     private val connectivity by lazy {
         checkNotNull(getSystemService<ConnectivityManager>())
-    }
-    private val wifiManager by lazy {
-        applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
     }
     private val networks = ConcurrentHashMap<Network, NetworkState>()
 
@@ -97,9 +92,7 @@ class WifiAutomationService : Service() {
             return START_NOT_STICKY
         }
 
-        // A start command is also our cheap "settings changed, re-evaluate now"
-        // signal. Clear the edge cache so changing the trusted SSID list takes
-        // effect immediately even when the physical network did not change.
+        // A start command also means settings may have changed.
         lastDesiredRunning = null
         evaluate()
 
@@ -117,19 +110,8 @@ class WifiAutomationService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     private fun evaluate() {
-        val store = UiStore(this)
-        if (!store.wifiAutomationEnabled) {
+        if (!UiStore(this).wifiAutomationEnabled) {
             stopSelf()
-            return
-        }
-
-        val trusted = store.trustedWifiSsids
-            .map(::normalizeSsid)
-            .filter { it.isNotBlank() }
-            .toSet()
-
-        if (trusted.isEmpty()) {
-            updateNotification(getString(DesignR.string.wifi_automation_no_networks))
             return
         }
 
@@ -139,24 +121,20 @@ class WifiAutomationService : Service() {
                 it.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
             }
 
-        // Do not change VPN state during a handover gap. Once Wi-Fi or mobile
-        // validates, onCapabilitiesChanged() will call us again with a stable
-        // answer.
+        // Avoid toggling during the short handover gap between Wi-Fi and mobile.
+        // As soon as one network validates, onCapabilitiesChanged() runs again.
         if (validated.isEmpty()) {
             updateNotification(getString(DesignR.string.wifi_automation_waiting_network))
             return
         }
 
-        val hasValidatedWifi = validated.any {
+        val onWifi = validated.any {
             it.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
         }
-
-        val ssid = if (hasValidatedWifi) currentSsid() else null
-        val onTrustedWifi = ssid != null && normalizeSsid(ssid) in trusted
-        val desiredRunning = !onTrustedWifi
+        val desiredRunning = !onWifi
 
         if (lastDesiredRunning == desiredRunning) {
-            updateStatusNotification(onTrustedWifi, ssid)
+            updateStatusNotification(onWifi)
             return
         }
 
@@ -167,48 +145,25 @@ class WifiAutomationService : Service() {
             if (vpnPermission != null) {
                 Log.w("Wi-Fi automation: VPN permission is not granted")
                 updateNotification(getString(DesignR.string.wifi_automation_vpn_permission))
-            } else if (hasValidatedWifi && ssid == null) {
-                updateNotification(getString(DesignR.string.wifi_automation_ssid_unavailable))
             } else {
-                updateNotification(getString(DesignR.string.wifi_automation_untrusted))
+                updateNotification(getString(DesignR.string.wifi_automation_no_wifi))
             }
         } else {
             stopClashService()
-            updateStatusNotification(true, ssid)
+            updateNotification(getString(DesignR.string.wifi_automation_wifi_connected))
         }
     }
 
-    @Suppress("DEPRECATION")
-    private fun currentSsid(): String? {
-        return try {
-            val raw = wifiManager.connectionInfo?.ssid ?: return null
-            val normalized = normalizeSsid(raw)
-
-            normalized.takeUnless {
-                it.isBlank() || it == WifiManager.UNKNOWN_SSID
-            }
-        } catch (e: SecurityException) {
-            Log.w("Wi-Fi automation: SSID access denied", e)
-            null
-        } catch (e: Exception) {
-            Log.w("Wi-Fi automation: unable to read SSID", e)
-            null
-        }
-    }
-
-    private fun updateStatusNotification(onTrustedWifi: Boolean, ssid: String?) {
-        val text = when {
-            onTrustedWifi && ssid != null ->
-                getString(DesignR.string.wifi_automation_trusted, ssid)
-            ssid == null && networks.values.any {
-                it.capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
-            } ->
-                getString(DesignR.string.wifi_automation_ssid_unavailable)
-            else ->
-                getString(DesignR.string.wifi_automation_untrusted)
-        }
-
-        updateNotification(text)
+    private fun updateStatusNotification(onWifi: Boolean) {
+        updateNotification(
+            getString(
+                if (onWifi) {
+                    DesignR.string.wifi_automation_wifi_connected
+                } else {
+                    DesignR.string.wifi_automation_no_wifi
+                }
+            )
+        )
     }
 
     private fun createChannel() {
@@ -250,9 +205,6 @@ class WifiAutomationService : Service() {
         NotificationManagerCompat.from(this)
             .notify(R.id.nf_wifi_automation, buildNotification(text))
     }
-
-    private fun normalizeSsid(value: String): String =
-        value.trim().removeSurrounding("\"")
 
     companion object {
         private const val CHANNEL_ID = "wifi_automation_channel"
