@@ -135,14 +135,6 @@ class UiStore(context: Context) {
         defaultValue = false,
     )
 
-    /**
-     * SSIDs on which Prizrak should stay stopped. Stored as plain names without
-     * the quotes Android may add around WifiInfo.ssid.
-     */
-    var trustedWifiSsids by store.stringSet(
-        key = "trusted_wifi_ssids",
-        defaultValue = emptySet(),
-    )
 
     companion object {
         private const val PREFERENCE_NAME = "ui"
