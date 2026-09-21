@@ -127,8 +127,8 @@ class UiStore(context: Context) {
     )
 
     /**
-     * Automatically stop the tunnel on trusted Wi-Fi networks and start it
-     * again on any other validated network.
+     * Automatically stop the tunnel while a validated Wi-Fi network is active
+     * and start it again after switching to a validated non-Wi-Fi network.
      */
     var wifiAutomationEnabled: Boolean by store.boolean(
         key = "wifi_automation_enabled",
