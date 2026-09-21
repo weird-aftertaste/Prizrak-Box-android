@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.PowerManager
 import android.os.SystemClock
 import androidx.core.content.getSystemService
+import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.core.Clash
 import com.github.kr328.clash.service.store.ServiceStore
@@ -22,7 +23,7 @@ import kotlinx.coroutines.withContext
 import java.net.InetAddress
 import java.util.concurrent.ConcurrentHashMap
 
-class NetworkObserveModule(service: Service) : Module<Network>(service) {
+class NetworkObserveModule(service: Service) : Module<Network?>(service) {
     private val connectivity = service.getSystemService<ConnectivityManager>()!!
     private val networks: Channel<Network> = Channel(Channel.UNLIMITED)
     private val request = NetworkRequest.Builder().apply {
@@ -47,6 +48,33 @@ class NetworkObserveModule(service: Service) : Module<Network>(service) {
     private var curDnsList = emptyList<String>()
 
     private val store = ServiceStore(service)
+
+    enum class CurrentTransport {
+        Wifi,
+        Other,
+        Unavailable,
+    }
+
+    /**
+     * Transport currently preferred by the observer, but only after Android
+     * has validated it as having internet. During a handover gap we return
+     * [Unavailable] so callers keep their previous state rather than flapping.
+     */
+    fun currentTransport(): CurrentTransport {
+        val network = currentNetwork ?: return CurrentTransport.Unavailable
+        val capabilities = connectivity.getNetworkCapabilities(network)
+            ?: return CurrentTransport.Unavailable
+
+        if (!capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+            return CurrentTransport.Unavailable
+        }
+
+        return if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+            CurrentTransport.Wifi
+        } else {
+            CurrentTransport.Other
+        }
+    }
 
     /**
      * A network change: the callbacks drop a signal in here, the module loop
@@ -400,6 +428,9 @@ class NetworkObserveModule(service: Service) : Module<Network>(service) {
         val screenOn = receiveBroadcast(false, Channel.CONFLATED) {
             addAction(Intent.ACTION_SCREEN_ON)
         }
+        val wifiAutomationChanged = receiveBroadcast(capacity = Channel.CONFLATED) {
+            addAction(Intents.ACTION_WIFI_AUTOMATION_CHANGED)
+        }
 
         try {
             coroutineScope {
@@ -412,6 +443,7 @@ class NetworkObserveModule(service: Service) : Module<Network>(service) {
                         }
                         networkChanges.onReceive {
                             handleNetworkChanged(scope)
+                            enqueueEvent(currentNetwork)
                         }
                         networkReady.onReceive {
                             Clash.notifyNetworkReady()
@@ -431,6 +463,17 @@ class NetworkObserveModule(service: Service) : Module<Network>(service) {
                                     probePending = true
                                 }
                             }
+
+                            // Also notify the service-level automation logic.
+                            // This fires for the initial validated network too,
+                            // not only for later network changes.
+                            enqueueEvent(currentNetwork)
+                        }
+                        wifiAutomationChanged.onReceive {
+                            // Re-evaluate immediately when the user flips the
+                            // setting, even if the physical network did not
+                            // change.
+                            enqueueEvent(currentNetwork)
                         }
                         screenOn.onReceive {
                             if (probePending) {
