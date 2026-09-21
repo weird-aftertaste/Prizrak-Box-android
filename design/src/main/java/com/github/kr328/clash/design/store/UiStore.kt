@@ -126,15 +126,6 @@ class UiStore(context: Context) {
         defaultValue = false,
     )
 
-    /**
-     * Automatically stop the tunnel while a validated Wi-Fi network is active
-     * and start it again after switching to a validated non-Wi-Fi network.
-     */
-    var wifiAutomationEnabled: Boolean by store.boolean(
-        key = "wifi_automation_enabled",
-        defaultValue = false,
-    )
-
 
     companion object {
         private const val PREFERENCE_NAME = "ui"
