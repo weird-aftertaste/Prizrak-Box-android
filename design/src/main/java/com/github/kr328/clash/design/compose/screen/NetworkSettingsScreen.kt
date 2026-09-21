@@ -147,6 +147,7 @@ fun NetworkSettingsScreen(
                 title = stringResource(R.string.wifi_automation_title),
                 summary = stringResource(R.string.wifi_automation_summary),
                 checked = wifiAutomation,
+                enabled = enableVpn,
                 onCheckedChange = {
                     wifiAutomation = it
                     onWifiAutomationChanged(it)
