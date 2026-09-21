@@ -8,13 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.github.kr328.clash.design.R
-import com.github.kr328.clash.design.compose.component.EditableListPreference
 import com.github.kr328.clash.design.compose.component.PreferenceRow
 import com.github.kr328.clash.design.compose.component.PreferenceScaffold
 import com.github.kr328.clash.design.compose.component.SettingsCategory
 import com.github.kr328.clash.design.compose.component.SingleChoiceDialog
 import com.github.kr328.clash.design.compose.component.SwitchPreference
-import com.github.kr328.clash.design.compose.component.TextAdapter
 import com.github.kr328.clash.design.store.UiStore
 import com.github.kr328.clash.service.store.ServiceStore
 
@@ -30,7 +28,6 @@ fun NetworkSettingsScreen(
     onBack: () -> Unit,
     onAccessControlPackages: () -> Unit,
     onWifiAutomationChanged: (Boolean) -> Unit,
-    onTrustedWifiChanged: () -> Unit,
 ) {
     var showTunStack by remember { mutableStateOf(false) }
 
@@ -40,9 +37,6 @@ fun NetworkSettingsScreen(
     var tunStackMode by remember { mutableStateOf(srvStore.tunStackMode) }
     var resetConnections by remember { mutableStateOf(srvStore.resetConnectionsOnNetworkChange) }
     var wifiAutomation by remember { mutableStateOf(uiStore.wifiAutomationEnabled) }
-    var trustedWifiSsids by remember {
-        mutableStateOf(uiStore.trustedWifiSsids.toList().sorted())
-    }
 
     val vpnEnabled = !running
 
@@ -156,24 +150,6 @@ fun NetworkSettingsScreen(
                 onCheckedChange = {
                     wifiAutomation = it
                     onWifiAutomationChanged(it)
-                },
-            )
-        }
-        item {
-            EditableListPreference(
-                title = stringResource(R.string.trusted_wifi_title),
-                value = trustedWifiSsids,
-                adapter = TextAdapter.String,
-                placeholder = stringResource(R.string.trusted_wifi_empty),
-                onValueChange = { values ->
-                    val cleaned = values.orEmpty()
-                        .map { it.trim().removeSurrounding("\"") }
-                        .filter { it.isNotBlank() }
-                        .toSet()
-
-                    uiStore.trustedWifiSsids = cleaned
-                    trustedWifiSsids = cleaned.toList().sorted()
-                    onTrustedWifiChanged()
                 },
             )
         }
