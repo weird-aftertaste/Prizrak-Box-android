@@ -221,14 +221,6 @@
             android:value="explanation_for_special_use"/>
         </service>
         <service
-            android:name=".WifiAutomationService"
-            android:exported="false"
-            android:foregroundServiceType="specialUse">
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="Keeps Wi-Fi automation active while the VPN itself is stopped" />
-        </service>
-        <service
             android:name=".TileService"
             android:exported="true"
             android:icon="@drawable/ic_logo_service"
@@ -242,15 +234,6 @@
         <receiver
             android:name=".RestartReceiver"
             android:enabled="false"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name=".WifiAutomationReceiver"
-            android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
