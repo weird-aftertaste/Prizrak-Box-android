@@ -76,6 +76,17 @@ class ServiceStore(context: Context) {
         defaultValue = true
     )
 
+    /**
+     * Pause the VPN tunnel while a validated Wi-Fi network is active.
+     *
+     * Kept in the service store (rather than UI preferences) because the
+     * background NetworkObserveModule must read it without depending on :design.
+     */
+    var wifiAutomationEnabled by store.boolean(
+        key = "wifi_automation_enabled",
+        defaultValue = false
+    )
+
     var tunStackMode by store.string(
         key = "tun_stack_mode",
         defaultValue = "system"
